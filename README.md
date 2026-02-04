@@ -20,3 +20,14 @@ Bu repo eğitim amaçlıdır.
 - Paylaşılacak dosyalar bu klasörün içine eklenir.
 - Altta **Commit directly to main** seç ve commit atılmalı.
 - Dosya adlarının çakışmamasına dikkat edilmeli.
+
+### Release (ZIP) Paylaşımı
+
+- Repoya gir → sağ taraftaki **Releases** bölümüne tıkla.
+- **Create a new release** seç.
+- Sürüm adı yaz (örnek: `v1.0`, `Proje Teslim`).
+- Açıklama kısmına kısaca ne paylaşıldığını yaz.
+- **Attach binaries by dropping files here** alanına ZIP dosyasını sürükle.
+- **Publish release** diyerek yayınla.
+
+Not: Write yetkisi olan kullanıcılar release oluşturabilir ve ZIP dosyası ekleyebilir. Yayınlanan ZIP dosyaları repoya gelen herkes tarafından indirilebilir.
