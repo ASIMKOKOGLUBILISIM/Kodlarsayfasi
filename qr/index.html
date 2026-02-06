@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Menü</title>
+
+<style>
+body {
+    margin: 0;
+    background: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 15px;
+    width: 300px;
+    height: 300px;
+}
+
+.btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.school { background: #2563eb; }
+.game   { background: #dc2626; }
+.github { background: #16a34a; }
+.video  { background: #f59e0b; }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <a href="https://asimkokoglubtsgmtal.meb.k12.tr/" class="btn school" target="_blank">🏫 Okul Sitesi</a>
+    <a href="https://asimkokoglubilisim.github.io/Kodlarsayfasi/" class="btn game" target="_blank">🎮 Oyunum</a>
+    <a href="https://github.com/ASIMKOKOGLUBILISIM/Kodlarsayfasi" class="btn github" target="_blank">💻 GitHub</a>
+    <a href="#" class="btn video">🎬 Sunum (yakında)</a>
+</div>
+
+</body>
+</html>
