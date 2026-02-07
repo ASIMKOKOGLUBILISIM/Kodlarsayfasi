@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asım Kökoğlu Bilişim QR Menüsü</title>
+
+<style>
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin:0;
+    height:100vh;
+    background: radial-gradient(circle at top, #0a2540, #020617);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color:white;
+}
+
+.poster{
+    width:360px;
+    height:640px;
+    background: linear-gradient(180deg, #020617, #0a2540);
+    border-radius:25px;
+    padding:25px 20px;
+    box-shadow: 0 0 40px rgba(0,180,255,0.25);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
+}
+
+.poster::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(0,180,255,0.15), transparent 40%),
+      radial-gradient(circle at 80% 30%, rgba(0,180,255,0.15), transparent 40%),
+      radial-gradient(circle at 50% 80%, rgba(0,180,255,0.1), transparent 40%);
+    z-index:0;
+}
+
+.header{
+    text-align:center;
+    z-index:2;
+}
+
+.header h1{
+    font-size:20px;
+    margin:0;
+    letter-spacing:1px;
+}
+
+.header h2{
+    margin-top:6px;
+    font-size:14px;
+    font-weight:400;
+    color:#7dd3fc;
+}
+
+/* QR alanı */
+.qr-box{
+    width:200px;
+    height:200px;
+    background:white;
+    border-radius:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    box-shadow: 0 0 30px rgba(0,180,255,0.7);
+    z-index:2;
+}
+
+.qr-text{
+    text-align:center;
+    color:#0a2540;
+}
+
+.qr-icon{
+    font-size:38px;
+}
+
+.qr-title{
+    font-size:16px;
+    font-weight:700;
+    margin-top:6px;
+}
+
+.qr-sub{
+    font-size:12px;
+    opacity:0.7;
+    margin-top:3px;
+}
+
+.menu{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    z-index:2;
+}
+
+.btn{
+    height:75px;
+    border-radius:16px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-decoration:none;
+    color:white;
+    font-size:12px;
+    font-weight:600;
+    gap:6px;
+    transition:0.25s;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+.btn:hover{
+    transform:scale(1.07);
+    box-shadow: 0 0 25px rgba(0,180,255,0.6);
+}
+
+.school{ background: linear-gradient(135deg,#2563eb,#38bdf8);}
+.game{ background: linear-gradient(135deg,#dc2626,#f97316);}
+.github{ background: linear-gradient(135deg,#16a34a,#22c55e);}
+.sunum{ background: linear-gradient(135deg,#7c3aed,#a78bfa);}
+
+.footer{
+    font-size:10px;
+    color:#94a3b8;
+    z-index:2;
+}
+</style>
+</head>
+
+<body>
+
+<div class="poster">
+
+    <div class="header">
+        <h1>ASIM KÖKOĞLU</h1>
+        <h2>BİLİŞİM QR MENÜSÜ</h2>
+    </div>
+
+    <!-- QR alanı -->
+    <div class="qr-box">
+        <div class="qr-text">
+            <div class="qr-icon">📱</div>
+            <div class="qr-title">QR Kodunu Tara</div>
+            <div class="qr-sub">Menüye ulaş</div>
+        </div>
+    </div>
+
+    <div class="menu">
+        <a href="https://asimkokoglubtsgmtal.meb.k12.tr/" class="btn school" target="_blank">
+            🏫
+            Okul Sitemiz
+        </a>
+
+        <a href="https://asimkokoglubilisim.github.io/Kodlarsayfasi/" class="btn game" target="_blank">
+            🎮
+            Oyun
+        </a>
+
+        <a href="https://github.com/ASIMKOKOGLUBILISIM/Kodlarsayfasi" class="btn github" target="_blank">
+            💻
+            GitHub Sayfamız
+        </a>
+
+        <a href="#" class="btn sunum">
+            📄
+            Okul Sunumumuz
+        </a>
+    </div>
+
+    <div class="footer">
+        © Asım Kökoğlu Bilişim
+    </div>
+
+</div>
+
+</body>
+</html>
