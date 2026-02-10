@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Şifre Merkezi</title>
+    <style>
+        /* GENEL TASARIM VE CANLI RENKLER */
+        :root {
+            --primary: #ff007a;
+            --secondary: #00d4ff;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-dark);
+            overflow: hidden;
+            color: white;
+        }
+
+        /* HAREKETLİ ARKA PLAN ANİMASYONU */
+        #bg-canvas {
+            position: absolute;
+            top: 0; left: 0; z-index: -1;
+        }
+
+        /* KART TASARIMI (GLASSMORPHISM) */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            width: 420px;
+            z-index: 10;
+        }
+
+        h2 { text-align: center; margin-bottom: 20px; background: linear-gradient(to right, #00d4ff, #ff007a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 28px; }
+
+        .input-box { position: relative; margin-bottom: 20px; }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(0, 212, 255, 0.3); }
+
+        /* BUTONLAR */
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            color: white;
+        }
+
+        .btn-toggle { background: #475569; }
+        .btn-copy { background: #475569; }
+        .btn-generate { 
+            grid-column: span 2; 
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        /* GÜÇ ÇUBUĞU */
+        .strength-meter { height: 8px; background: #334155; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        .strength-fill { height: 100%; width: 0%; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* KRİTER LİSTESİ */
+        .hints { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; color: #94a3b8; }
+        .hint { display: flex; align-items: center; gap: 8px; }
+        .hint.valid { color: #10b981; }
+        .dot { width: 8px; height: 8px; background: #334155; border-radius: 50%; }
+        .valid .dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
+
+    </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="container">
+    <h2>Süper Şifre Merkezi</h2>
+
+    <div class="input-box">
+        <input type="password" id="pwInput" placeholder="Şifrenizi yazın veya üretin...">
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-toggle" onclick="toggleVisibility()">👁️ Göster</button>
+        <button class="btn-copy" onclick="copyPassword()">📋 Kopyala</button>
+        <button class="btn-generate" onclick="generatePassword()">✨ Güçlü Şifre Üret</button>
+    </div>
+
+    <div class="strength-meter">
+        <div id="fill" class="strength-fill"></div>
+    </div>
+
+    <div class="hints">
+        <div class="hint" id="h-len"><span class="dot"></span>8+ Karakter</div>
+        <div class="hint" id="h-upp"><span class="dot"></span>Büyük Harf</div>
+        <div class="hint" id="h-num"><span class="dot"></span>Rakam</div>
+        <div class="hint" id="h-spc"><span class="dot"></span>Özel Karakter</div>
+    </div>
+</div>
+
+<script>
+    // --- YOĞUN ARKA PLAN ANİMASYONU ---
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 3 + 1;
+            this.speedX = (Math.random() - 0.5) * 2;
+            this.speedY = (Math.random() - 0.5) * 2;
+            this.color = Math.random() > 0.5 ? '#ff007a' : '#00d4ff';
+        }
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+            if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+        }
+    }
+
+    function init() {
+        resize();
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+    }
+
+    function animate() {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.2)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', resize);
+    init(); animate();
+
+    // --- ŞİFRE MANTIĞI ---
+    const pwInput = document.getElementById('pwInput');
+    const fill = document.getElementById('fill');
+
+    function checkStrength() {
+        const val = pwInput.value;
+        const checks = {
+            'h-len': val.length >= 8,
+            'h-upp': /[A-Z]/.test(val),
+            'h-num': /[0-9]/.test(val),
+            'h-spc': /[^A-Za-z0-9]/.test(val)
+        };
+
+        let score = 0;
+        Object.keys(checks).forEach(id => {
+            const el = document.getElementById(id);
+            if (checks[id]) {
+                el.classList.add('valid');
+                score++;
+            } else {
+                el.classList.remove('valid');
+            }
+        });
+
+        const colors = ['#ff4d4d', '#fbbf24', '#3b82f6', '#10b981'];
+        fill.style.width = (score * 25) + '%';
+        fill.style.backgroundColor = colors[score - 1] || '#334155';
+    }
+
+    pwInput.addEventListener('input', checkStrength);
+
+    function toggleVisibility() {
+        pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+    }
+
+    function generatePassword() {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+        let password = "";
+        for (let i = 0; i < 16; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        pwInput.value = password;
+        pwInput.type = "text";
+        checkStrength();
+    }
+
+    function copyPassword() {
+        pwInput.select();
+        document.execCommand('copy');
+        alert("Şifre panoya kopyalandı!");
+    }
+</script>
+
+</body>
+</html>
