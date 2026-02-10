@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siber Güvenlik Simülasyonu</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .phone-screen { width: 320px; height: 600px; background: #000; border: 12px solid #333; border-radius: 36px; position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .status-bar { height: 25px; background: #000; }
+        .sms-container { padding: 15px; display: flex; flex-direction: column; }
+        .message-bubble { background: #e9e9eb; color: #000; padding: 12px; border-radius: 18px; font-size: 14px; line-height: 1.5; margin-bottom: 10px; border-bottom-left-radius: 4px; }
+        .link { color: #007aff; text-decoration: underline; cursor: pointer; word-break: break-all; }
+        
+        /* Eğitim Paneli Overlay */
+        #alertPanel { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); z-index: 10; padding: 20px; box-sizing: border-box; text-align: center; }
+        .warning-icon { font-size: 50px; color: #d93025; }
+        h2 { color: #d93025; font-size: 18px; }
+        .info-box { text-align: left; font-size: 13px; color: #333; line-height: 1.4; background: #fff1f0; padding: 10px; border-radius: 8px; border: 1px solid #ffa39e; }
+        .btn-reset { margin-top: 15px; padding: 10px 20px; background: #1890ff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="phone-screen">
+    <div class="status-bar"></div>
+    <div class="sms-container">
+        <div style="text-align: center; color: #8e8e93; font-size: 12px; margin-bottom: 10px;">Bugün 14:32</div>
+        <div class="message-bubble">
+            Merhaba, iyi günler. Bu mesajı alıyorsanız adınız bir terör örgütü (FETÖ) soruşturmasına karışmış demektir. Hakkınızda açılacak davayı durdurmak ve adınızı dosyadan sildirmek için 300.000 TL ödeme yapmanız gerekmektedir. Aksi takdirde, suçunuz olmadığı halde istenmeyen kötü sonuçlarla karşılaşabilirsiniz. Bilgi formunu okumak için tıklayın: 
+            <a href="https://crypto-o.click/LA4DEB" target="_blank" class="link" onclick="showWarning()">https://crypto-o.click/LA4DEB</a>
+        </div>
+    </div>
+
+    <div id="alertPanel">
+        <div class="warning-icon">⚠️</div>
+        <h2>OLTAYA GELDİNİZ!</h2>
+        <div class="info-box">
+            <p><strong>Neden Tehlikeli?</strong></p>
+            <ul>
+                <li><strong>Korku Senaryosu:</strong> Savcı veya polis asla SMS ile para istemez.</li>
+                <li><strong>Sahte Link:</strong> Linkteki "crypto-o.click" uzantısı bir devlet kurumuna ait olamaz.</li>
+                <li><strong>Sonuç:</strong> Az önce tıkladığınız link sizi kişisel bilgilerinizi çalmaya çalışan bir siteye yönlendirdi.</li>
+            </ul>
+        </div>
+        <p style="font-size: 11px; margin-top: 10px;">Eğitim amaçlı hazırlanmıştır. Lütfen gerçek hayatta bu tür mesajlara itibar etmeyin.</p>
+        <button class="btn-reset" onclick="hideWarning()">Anladım, Mesaja Dön</button>
+    </div>
+</div>
+
+<script>
+    function showWarning() {
+        // Kullanıcı linke tıkladığında bu fonksiyon çalışır.
+        // Link target="_blank" olduğu için yeni sekmede açılırken, bu panel de görünür olur.
+        document.getElementById('alertPanel').style.display = 'block';
+    }
+
+    function hideWarning() {
+        document.getElementById('alertPanel').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
