@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Seni Seviyorum!</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000; /* Arka plan siyah */
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 2;
+        }
+
+        /* YAZI: Parlayan ve sallanan efekt */
+        .love-message {
+            color: #ff4d6d;
+            font-size: 5rem;
+            text-shadow: 0 0 20px #ff4d6d;
+            margin: 0;
+            animation: bounce 2s ease-in-out infinite alternate;
+        }
+
+        /* KALP: Küt küt atan efekt */
+        .heart {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background-color: #ff4d6d;
+            margin: 60px auto;
+            transform: rotate(-45deg);
+            animation: beat 0.8s infinite ease-in-out;
+            box-shadow: 0 0 50px #ff4d6d;
+        }
+
+        .heart::before, .heart::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #ff4d6d;
+            border-radius: 50%;
+        }
+
+        .heart::before { top: -50px; left: 0; }
+        .heart::after { left: 50px; top: 0; }
+
+        /* ANİMASYON TANIMLARI */
+        @keyframes beat {
+            0% { transform: rotate(-45deg) scale(1); }
+            30% { transform: rotate(-45deg) scale(1.2); }
+            100% { transform: rotate(-45deg) scale(1); }
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); text-shadow: 0 0 10px #ff4d6d; }
+            to { transform: translateY(-20px); text-shadow: 0 0 30px #ff4d6d, 0 0 50px #ff4d6d; }
+        }
+
+        /* ARKA PLAN: Rastgele parlayan yıldızlar */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="love-message">Seni Seviyorum</h1>
+        <div class="heart"></div>
+        <p style="color: white; letter-spacing: 5px; opacity: 0.8;">SONSUZA DEK</p>
+    </div>
+
+    <script>
+        // Arka plana 50 tane yıldız ekleyelim
+        for (let i = 0; i < 50; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            let size = Math.random() * 3 + 'px';
+            star.style.width = size;
+            star.style.height = size;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
+            document.body.appendChild(star);
+        }
+    </script>
+
+</body>
+</html>
