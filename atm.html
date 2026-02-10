@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Siber Güv ATM - Tam Simülasyon</title>
+    <style>
+        :root { --screen: #00d2d3; --dark: #2c3e50; --gold: #f1c40f; --money: #2ecc71; }
+        body { background: #1a1a1a; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: monospace; overflow: hidden; }
+        
+        .atm-wrap { 
+            width: 460px; background: #bdc3c7; padding: 25px; border-radius: 20px; 
+            border: 6px solid #34495e; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* EKRAN */
+        .screen { 
+            background: var(--screen); height: 200px; border: 10px solid #2c3e50; 
+            border-radius: 5px; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; text-align: center; position: relative;
+        }
+        .display-msg { font-size: 15px; font-weight: bold; color: #1e272e; margin-bottom: 10px; }
+        .input-box { font-size: 24px; background: rgba(255,255,255,0.3); padding: 5px 20px; border-radius: 5px; min-width: 100px; height: 35px; display: flex; align-items: center; justify-content: center; }
+
+        /* FİŞ */
+        .receipt-slot { width: 90px; height: 6px; background: #222; position: absolute; left: 30px; top: 35px; border-radius: 2px; }
+        .receipt-paper { 
+            width: 80px; background: #fff; position: absolute; top: 0; left: 5px;
+            padding: 10px 5px; font-size: 8px; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transform: translateY(0); transition: transform 1.2s ease; z-index: -1; opacity: 0; border: 1px solid #ddd;
+        }
+        .receipt-paper.active { transform: translateY(-85px); opacity: 1; }
+
+        /* PARA HAZNESİ */
+        .cash-area { width: 220px; height: 12px; background: #111; margin: 25px auto 0; border-radius: 4px; position: relative; border-bottom: 2px solid #444; }
+        .money-bundle { 
+            width: 160px; height: 70px; background: var(--money); border: 2px solid #27ae60;
+            position: absolute; left: 30px; top: 0; z-index: -1; opacity: 0;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; color: #145a32;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 1s ease-in-out;
+        }
+        .money-bundle.out { transform: translateY(45px); opacity: 1; }
+        .money-bundle.in { transform: translateY(45px); opacity: 1; transition: none; }
+        .money-bundle.moving-in { transform: translateY(0); opacity: 0; transition: all 1s ease-in-out; }
+
+        /* KART */
+        .bank-card { 
+            width: 50px; height: 35px; background: linear-gradient(135deg, #2980b9, #3498db); 
+            border-radius: 4px; position: absolute; right: 30px; top: 140px; cursor: pointer;
+            transition: all 0.8s ease; border: 1px solid #1a5276; z-index: 5;
+            display: flex; flex-direction: column; justify-content: space-around; padding: 2px;
+        }
+        .bank-card.inserted { transform: translateY(-40px) scale(0.1); opacity: 0; pointer-events: none; }
+
+        /* TUŞ TAKIMI */
+        .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 25px; }
+        .key { padding: 15px; background: #ecf0f1; border: 1px solid #7f8c8d; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .key:active { background: #bdc3c7; transform: scale(0.95); }
+        .key.cancel { background: #e74c3c; color: white; }
+        .key.enter { background: #27ae60; color: white; }
+
+        .btn-action { width: 140px; padding: 10px; margin: 5px; cursor: pointer; background: #34495e; color: white; border: none; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="atm-wrap">
+    <div class="receipt-slot">
+        <div class="receipt-paper" id="receipt">
+            <b>SIBER GUV ATM</b><br><span id="r-date"></span><br>----------<br>
+            İŞLEM: <span id="r-type"></span><br>TUTAR: <span id="r-amt"></span><br>
+            BAKİYE: <span id="r-bal"></span><br>----------<br>TÜRKİYE 2026
+        </div>
+    </div>
+
+    <div class="bank-card" id="myCard" onclick="insertCard()">
+        <div style="width:10px; height:8px; background:var(--gold); border-radius:2px; margin-left:4px;"></div>
+        <div style="width:35px; height:2px; background:rgba(255,255,255,0.3); margin-left:4px;"></div>
+        <div style="color:white; font-size:5px; margin-left:4px;">VISA</div>
+    </div>
+
+    <div class="screen" id="mainScreen">
+        <div id="ui"><div class="display-msg">HOŞGELDİNİZ<br><br>KARTINIZI TAKMAK İÇİN<br>KARTA TIKLAYIN</div></div>
+    </div>
+
+    <div class="keypad">
+        <button class="key" onclick="press('1')">1</button><button class="key" onclick="press('2')">2</button><button class="key" onclick="press('3')">3</button>
+        <button class="key" onclick="press('4')">4</button><button class="key" onclick="press('5')">5</button><button class="key" onclick="press('6')">6</button>
+        <button class="key" onclick="press('7')">7</button><button class="key" onclick="press('8')">8</button><button class="key" onclick="press('9')">9</button>
+        <button class="key cancel" onclick="location.reload()">İPTAL</button><button class="key" onclick="press('0')">0</button>
+        <button class="key enter" onclick="confirm()">GİRİŞ</button>
+    </div>
+
+    <div class="cash-area">
+        <div class="money-bundle" id="cashObj">💵 <span id="cashVal">0</span> TL</div>
+    </div>
+</div>
+
+<script>
+    let bakiye = localStorage.getItem('atm_bakiye') ? parseInt(localStorage.getItem('atm_bakiye')) : 5000;
+    let input = "", mode = "START";
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(f, d, v=0.03) {
+        const o=audioCtx.createOscillator(); const g=audioCtx.createGain();
+        o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(v, audioCtx.currentTime);
+        o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+d);
+    }
+
+    // Geliştirilmiş 2 Saniyelik Para Sayma Sesi
+    function playCountingEffect() {
+        let now = audioCtx.currentTime;
+        for(let i=0; i<16; i++) {
+            let t = now + (i * 0.12);
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.type = 'square'; // Daha mekanik bir ses için square wave
+            o.frequency.setValueAtTime(120 + (i * 5), t);
+            g.gain.setValueAtTime(0.015, t);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(t); o.stop(t + 0.1);
+        }
+    }
+
+    function insertCard() {
+        if(mode !== "START") return;
+        playSound(440, 0.1);
+        document.getElementById('myCard').classList.add('inserted');
+        setTimeout(() => { mode = "PIN"; updateUI(); }, 800);
+    }
+
+    function press(n) { playSound(800, 0.05); if(["PIN","WITHDRAW","DEPOSIT"].includes(mode)) { input+=n; updateUI(); } }
+
+    function updateUI() {
+        const ui = document.getElementById('ui');
+        if(mode === "PIN") ui.innerHTML = `<div class="display-msg">LÜTFEN ŞİFREYİ GİRİNİZ</div><div class="input-box">${"*".repeat(input.length)}</div>`;
+        else if(mode === "WITHDRAW" || mode === "DEPOSIT") ui.innerHTML = `<div class="display-msg">${mode === "DEPOSIT" ? "YATIRILACAK" : "ÇEKİLECEK"}</div><div class="input-box">${input} TL</div>`;
+    }
+
+    function confirm() {
+        playSound(600, 0.1);
+        if(mode === "PIN") { if(input === "1234") showMenu(); else { alert("Hatalı!"); input=""; updateUI(); } }
+        else if(mode === "WITHDRAW") {
+            let m = parseInt(input);
+            if(m > 0 && m <= bakiye) { bakiye -= m; processAction("ÇEKİLDİ", m); }
+            else { alert("Yetersiz!"); input=""; updateUI(); }
+        } else if(mode === "DEPOSIT") {
+            let m = parseInt(input);
+            if(m > 0) { bakiye += m; processAction("YATIRILDI", m); }
+        }
+    }
+
+    function showMenu() {
+        mode = "MENU"; input = "";
+        document.getElementById('ui').innerHTML = `<div class="display-msg">BAKİYE: ${bakiye} TL</div>
+            <button class="btn-action" onclick="mode='WITHDRAW';updateUI()">PARA ÇEK</button>
+            <button class="btn-action" onclick="mode='DEPOSIT';updateUI()">PARA YATIR</button>
+            <button class="btn-action" onclick="location.reload()">ÇIKIŞ</button>`;
+    }
+
+    function processAction(type, amt) {
+        localStorage.setItem('atm_bakiye', bakiye);
+        document.getElementById('ui').innerHTML = `<div class="display-msg">İŞLEM YAPILIYOR...</div>`;
+        const cash = document.getElementById('cashObj');
+        document.getElementById('cashVal').innerText = amt;
+
+        if(type === "YATIRILDI") {
+            cash.className = "money-bundle in"; 
+            setTimeout(() => { 
+                cash.className = "money-bundle moving-in"; 
+                playCountingEffect(); // Para girerken sayma sesi
+            }, 500);
+            setTimeout(() => finalize(type, amt), 2500);
+        } else {
+            playCountingEffect(); // Para çıkmadan önce sayma sesi
+            setTimeout(() => { 
+                cash.className = "money-bundle out"; 
+                finalize(type, amt); 
+            }, 2000);
+        }
+    }
+
+    function finalize(type, amt) {
+        document.getElementById('r-date').innerText = new Date().toLocaleString();
+        document.getElementById('r-type').innerText = type;
+        document.getElementById('r-amt').innerText = amt + " TL";
+        document.getElementById('r-bal').innerText = bakiye + " TL";
+        document.getElementById('receipt').classList.add('active');
+        playSound(250, 0.4, 0.02);
+        
+        setTimeout(() => {
+            document.getElementById('receipt').classList.remove('active');
+            document.getElementById('cashObj').className = "money-bundle"; 
+            showMenu();
+        }, 4000);
+    }
+</script>
+</body>
+</html>
