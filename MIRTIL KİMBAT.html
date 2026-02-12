@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ULTIMATE MK: DUAL EDITION</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: 'Courier New', monospace; }
+        #mk-engine { position: relative; width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center; background: #050505; }
+        canvas { border: 6px solid #222; box-shadow: 0 0 100px rgba(255, 0, 0, 0.4); }
+        .ui { position: absolute; top: 30px; width: 940px; display: flex; justify-content: space-between; pointer-events: none; }
+        .hp-box { width: 420px; height: 35px; background: rgba(80, 0, 0, 0.5); border: 2px solid #fff; box-shadow: 0 0 15px #000; }
+        .hp-bar { width: 100%; height: 100%; background: linear-gradient(180deg, #ffff00 0%, #ff8c00 50%, #8b0000 100%); transition: width 0.1s; }
+        .char-name { color: #fff; font-size: 24px; font-weight: bold; text-shadow: 2px 2px #000; margin-bottom: 5px; }
+        #msg { position: absolute; width: 100%; top: 40%; text-align: center; color: #f00; font-size: 120px; text-shadow: 5px 5px #000; display: none; z-index: 100; font-weight: 900; }
+        .controls-hint { position: absolute; bottom: 20px; color: #555; font-size: 12px; text-align: center; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div id="mk-engine">
+    <div id="msg">FIGHT!</div>
+    <div class="ui">
+        <div>
+            <div class="char-name">SUB-ZERO</div>
+            <div class="hp-box"><div id="hp1" class="hp-bar"></div></div>
+        </div>
+        <div style="text-align: right;">
+            <div class="char-name">SCORPION</div>
+            <div class="hp-box" style="transform: scaleX(-1);"><div id="hp2" class="hp-bar"></div></div>
+        </div>
+    </div>
+    <canvas id="stage" width="1000" height="500"></canvas>
+    <div class="controls-hint">P1: W,A,S,D + F (P), G (K) | P2: Arrow Keys + K (P), L (K)</div>
+</div>
+
+<script>
+/**
+ * MK ULTIMATE ENGINE - MULTIPLAYER & ANIMATED BG
+ * Veri yoğunluğu ve performans odaklı monolitik yapı.
+ */
+
+const ctx = document.getElementById('stage').getContext('2d');
+const msg = document.getElementById('msg');
+
+// --- ARKA PLAN ANİMASYON VERİSİ ---
+const Background = {
+    clouds: Array.from({length: 8}, () => ({x: Math.random()*1000, y: Math.random()*200, s: Math.random()+0.5})),
+    lightning: 0,
+    draw() {
+        // Gökyüzü ve Şimşek Efekti
+        if(Math.random() > 0.99) this.lightning = 10;
+        ctx.fillStyle = this.lightning > 0 ? `rgba(200,200,255,${this.lightning/10})` : "#101015";
+        ctx.fillRect(0,0,1000,500);
+        if(this.lightning > 0) this.lightning--;
+
+        // Hareketli Bulutlar
+        ctx.fillStyle = "rgba(255,255,255,0.05)";
+        this.clouds.forEach(c => {
+            c.x += c.s;
+            if(c.x > 1000) c.x = -100;
+            ctx.beginPath(); ctx.arc(c.x, c.y, 50, 0, Math.PI*2); ctx.fill();
+        });
+
+        // Pit Zemini (Perspektif)
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(0, 420, 1000, 80);
+        ctx.strokeStyle = "#333";
+        for(let i=0; i<1000; i+=40) { ctx.strokeRect(i, 420, 40, 20); }
+    }
+};
+
+// --- KARAKTER SINIFI ---
+class Fighter {
+    constructor(id, x, color, controls) {
+        this.id = id; this.x = x; this.y = 420;
+        this.vx = 0; this.vy = 0; this.hp = 100;
+        this.color = color; this.controls = controls;
+        this.state = 'IDLE'; this.frame = 0;
+        this.w = 80; this.h = 170;
+        this.isGrounded = true;
+        this.side = id === 1 ? 1 : -1;
+    }
+
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        if(this.y < 420) { this.vy += 1.8; this.isGrounded = false; }
+        else { this.y = 420; this.vy = 0; this.isGrounded = true; }
+        this.vx *= 0.85;
+
+        // Otomatik yüz dönme
+        const opponent = this.id === 1 ? Engine.p2 : Engine.p1;
+        this.side = (opponent.x > this.x) ? 1 : -1;
+    }
+
+    draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        if(this.side === -1) ctx.scale(-1, 1);
+
+        // Karakter Gövdesi (Binlerce piksel detayı simülasyonu)
+        ctx.shadowBlur = 20; ctx.shadowColor = "#000";
+        ctx.fillStyle = this.state === 'HIT' ? '#fff' : this.color;
+        
+        // Nefes Alma Efekti
+        let bounce = Math.sin(Date.now()/150) * 4;
+        ctx.fillRect(-this.w/2, -this.h + bounce, this.w, this.h - bounce);
+        
+        // Atak Efekti
+        if(this.state === 'PUNCH') {
+            ctx.fillStyle = "white";
+            ctx.fillRect(this.w/2, -this.h+60, 50, 20);
+        } else if(this.state === 'KICK') {
+            ctx.fillStyle = "white";
+            ctx.fillRect(this.w/2, -80, 80, 30);
+        }
+
+        ctx.restore();
+    }
+}
+
+// --- ANA MOTOR ---
+const Engine = {
+    p1: new Fighter(1, 200, "#0055ff", {up:'KeyW', left:'KeyA', right:'KeyD', p:'KeyF', k:'KeyG'}),
+    p2: new Fighter(2, 800, "#ffaa00", {up:'ArrowUp', left:'ArrowLeft', right:'ArrowRight', p:'KeyK', k:'KeyL'}),
+    shake: 0,
+    blood: [],
+
+    init() {
+        window.addEventListener('keydown', (e) => this.handleInput(e));
+        this.loop();
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 1000);
+    },
+
+    handleInput(e) {
+        [this.p1, this.p2].forEach(p => {
+            if(e.code === p.controls.up && p.isGrounded) p.vy = -32;
+            if(e.code === p.controls.left) p.vx = -15;
+            if(e.code === p.controls.right) p.vx = 15;
+            if(e.code === p.controls.p) { p.state = 'PUNCH'; setTimeout(()=>p.state='IDLE', 150); }
+            if(e.code === p.controls.k) { p.state = 'KICK'; setTimeout(()=>p.state='IDLE', 180); }
+        });
+    },
+
+    checkHits() {
+        const d = Math.abs(this.p1.x - this.p2.x);
+        if(d < 120) {
+            if(this.p1.state !== 'IDLE' && this.p1.state !== 'HIT') this.applyDamage(this.p2, this.p1);
+            if(this.p2.state !== 'IDLE' && this.p2.state !== 'HIT') this.applyDamage(this.p1, this.p2);
+        }
+    },
+
+    applyDamage(target, attacker) {
+        target.hp -= 2;
+        target.state = 'HIT';
+        target.vx = attacker.side * 15;
+        this.shake = 10;
+        this.spawnBlood(target.x, target.y - 100);
+        document.getElementById(`hp${target.id}`).style.width = Math.max(0, target.hp) + "%";
+        setTimeout(() => { if(target.state === 'HIT') target.state = 'IDLE'; }, 100);
+        
+        if(target.hp <= 0) {
+            msg.innerText = "FINISH HIM!";
+            msg.style.display = 'block';
+        }
+    },
+
+    spawnBlood(x, y) {
+        for(let i=0; i<10; i++) this.blood.push({x, y, vx:(Math.random()-0.5)*15, vy:(Math.random()-1)*15, l:1});
+    },
+
+    loop() {
+        let sx = (Math.random()-0.5)*this.shake;
+        let sy = (Math.random()-0.5)*this.shake;
+        this.shake *= 0.9;
+        ctx.setTransform(1,0,0,1,sx,sy);
+
+        Background.draw();
+        
+        [this.p1, this.p2].forEach(p => { p.update(); p.draw(); });
+        this.checkHits();
+
+        this.blood.forEach((b, i) => {
+            b.x += b.vx; b.y += b.vy; b.vy += 0.8; b.l -= 0.03;
+            ctx.fillStyle = `rgba(255,0,0,${b.l})`;
+            ctx.fillRect(b.x, b.y, 4, 4);
+            if(b.l <= 0) this.blood.splice(i, 1);
+        });
+
+        requestAnimationFrame(() => this.loop());
+    }
+};
+
+Engine.init();
+</script>
+</body>
+</html>
