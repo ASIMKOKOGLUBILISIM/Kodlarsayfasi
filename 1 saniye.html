@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>İnternette 1 Saniye</title>
+<style>
+  body {
+    background: #020617;
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 50px;
+  }
+  .box {
+    background: #0f172a;
+    margin: 15px auto;
+    padding: 15px;
+    width: 320px;
+    font-size: 20px;
+    border-left: 5px solid #38bdf8;
+  }
+  button {
+    padding: 15px 30px;
+    font-size: 20px;
+    margin-top: 30px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>🌐 İnternette 1 Saniye</h1>
+<p>1 saniyede internette neler oluyor?</p>
+
+<div class="box">📩 Gönderilen E-postalar: <span id="mail">0</span></div>
+<div class="box">🔍 Yapılan Aramalar: <span id="search">0</span></div>
+<div class="box">🎬 İzlenen Videolar: <span id="video">0</span></div>
+<div class="box">📸 Paylaşılan Fotoğraflar: <span id="photo">0</span></div>
+
+<button onclick="start()">▶ Başlat (1 Saniye)</button>
+
+<script>
+function animate(id, max) {
+  let value = 0;
+  const el = document.getElementById(id);
+  const interval = setInterval(() => {
+    value += Math.ceil(max / 20);
+    el.textContent = value.toLocaleString();
+    if (value >= max) {
+      el.textContent = max.toLocaleString();
+      clearInterval(interval);
+    }
+  }, 50);
+}
+
+function start() {
+  animate("mail", 2400000);
+  animate("search", 99000);
+  animate("video", 500000);
+  animate("photo", 120000);
+}
+</script>
+
+</body>
+</html>

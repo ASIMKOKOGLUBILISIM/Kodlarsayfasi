@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Hafıza vs Bilgisayar</title>
+<style>
+  body {
+    background: #020617;
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 50px;
+  }
+  input, button {
+    padding: 10px;
+    font-size: 18px;
+    margin: 10px;
+  }
+  #numbers {
+    font-size: 28px;
+    margin-top: 20px;
+  }
+  #result {
+    margin-top: 30px;
+    font-size: 24px;
+    color: #22c55e;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧠 Hafıza vs Bilgisayar</h1>
+<p>Görüntülenen sayıları hafızanda tut ve tekrar yaz</p>
+
+<div id="numbers"></div>
+<div id="inputDiv" style="display:none;">
+  <input type="text" id="userInput" placeholder="Sayılari gir, boşlukla ayır">
+  <button onclick="check()">Gönder</button>
+</div>
+
+<div id="result"></div>
+
+<script>
+let sequence = [];
+function generateSequence() {
+  sequence = [];
+  for (let i=0; i<10; i++) {
+    sequence.push(Math.floor(Math.random()*100)+1);
+  }
+  document.getElementById("numbers").textContent = sequence.join("  ");
+  setTimeout(() => {
+    document.getElementById("numbers").textContent = "";
+    document.getElementById("inputDiv").style.display = "block";
+  }, 3000); // 3 saniye göster
+}
+
+function check() {
+  const userValues = document.getElementById("userInput").value.split(" ").map(Number);
+  let correct = 0;
+  for (let i=0; i<sequence.length; i++) {
+    if (sequence[i] === userValues[i]) correct++;
+  }
+
+  document.getElementById("result").innerHTML = `
+    Senin Doğru Sayın: ${correct} / 10 <br>
+    Bilgisayar Doğru Sayısı: 10 / 10 🖥️
+  `;
+}
+
+generateSequence();
+</script>
+
+</body>
+</html>

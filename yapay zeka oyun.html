@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Yapay Zeka Tahmin Oyunu</title>
+<style>
+  body {
+    background: #020617;
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 50px;
+  }
+  button {
+    padding: 12px 20px;
+    font-size: 18px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  #guess {
+    font-size: 40px;
+    color: #22d3ee;
+    margin: 30px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>🤖 Yapay Zeka Tahmin Oyunu</h1>
+<p>Aklından <b>1 ile 100</b> arasında bir sayı tut</p>
+
+<div id="guess">Hazırım!</div>
+
+<button onclick="start()">Başla</button>
+<br>
+<button onclick="lower()">Daha Küçük</button>
+<button onclick="correct()">Doğru!</button>
+<button onclick="higher()">Daha Büyük</button>
+
+<p id="info"></p>
+
+<script>
+let min = 1;
+let max = 100;
+let current;
+
+function start() {
+  min = 1;
+  max = 100;
+  guess();
+  document.getElementById("info").textContent =
+    "Sayıyı tuttum, tahmin ediyorum...";
+}
+
+function guess() {
+  current = Math.floor((min + max) / 2);
+  document.getElementById("guess").textContent = current;
+}
+
+function lower() {
+  max = current - 1;
+  guess();
+}
+
+function higher() {
+  min = current + 1;
+  guess();
+}
+
+function correct() {
+  document.getElementById("info").textContent =
+    "🎉 Yapay zeka sayını buldu! (Aslında algoritma 😄)";
+}
+</script>
+
+</body>
+</html>

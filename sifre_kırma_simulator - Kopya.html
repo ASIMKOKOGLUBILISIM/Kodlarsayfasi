@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Brute Force Simülasyonu</title>
+<style>
+  body {
+    background: #0f172a;
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 50px;
+  }
+  input, button {
+    padding: 10px;
+    font-size: 18px;
+    margin: 10px;
+  }
+  #attempt {
+    font-size: 32px;
+    letter-spacing: 5px;
+    margin-top: 30px;
+    color: #38bdf8;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #22c55e;
+  }
+</style>
+</head>
+<body>
+
+<h1>🔓 Brute Force Şifre Kırma Simülasyonu</h1>
+<p>4 haneli bir şifre gir</p>
+
+<input type="password" id="password" maxlength="4" placeholder="Örn: 1234">
+<br>
+<button onclick="start()">Saldırıyı Başlat</button>
+
+<div id="attempt">----</div>
+<div id="result"></div>
+
+<script>
+function start() {
+  const target = document.getElementById("password").value;
+  const attemptEl = document.getElementById("attempt");
+  const resultEl = document.getElementById("result");
+
+  if (target.length !== 4 || isNaN(target)) {
+    alert("Lütfen 4 haneli bir sayı gir!");
+    return;
+  }
+
+  let i = 0;
+  const startTime = Date.now();
+
+  const interval = setInterval(() => {
+    let guess = i.toString().padStart(4, "0");
+    attemptEl.textContent = guess;
+
+    if (guess === target) {
+      clearInterval(interval);
+      let time = ((Date.now() - startTime) / 1000).toFixed(2);
+      resultEl.textContent =
+        `✅ Şifre ${i} denemede ${time} saniyede kırıldı!`;
+    }
+    i++;
+  }, 5);
+}
+</script>
+
+</body>
+</html>
