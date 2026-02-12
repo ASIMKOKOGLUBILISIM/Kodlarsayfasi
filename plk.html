@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Dodge Game</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    margin: 10px;
+    color: #00ffff;
+    text-shadow: 0 0 15px #00ffff;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    border: 2px solid #00ffff;
+    box-shadow: 0 0 20px #00ffff;
+}
+
+#scoreBoard {
+    margin: 10px;
+    font-size: 18px;
+}
+
+#gameOver {
+    display: none;
+    font-size: 28px;
+    color: red;
+    margin-top: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #00ffff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #00aaaa;
+}
+</style>
+</head>
+
+<body>
+
+<h1>⚡ Neon Dodge</h1>
+<div id="scoreBoard">Skor: <span id="score">0</span></div>
+<div id="gameOver">GAME OVER</div>
+<button onclick="restartGame()">Yeniden Başlat</button>
+<canvas id="gameCanvas" width="600" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let player = {
+    x: 300,
+    y: 200,
+    radius: 15,
+    speed: 4
+};
+
+let enemies = [];
+let keys = {};
+let score = 0;
+let gameOver = false;
+let enemySpeed = 2;
+
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+
+function spawnEnemy() {
+    let side = Math.floor(Math.random() * 4);
+    let x, y;
+
+    if (side === 0) { x = 0; y = Math.random() * canvas.height; }
+    if (side === 1) { x = canvas.width; y = Math.random() * canvas.height; }
+    if (side === 2) { x = Math.random() * canvas.width; y = 0; }
+    if (side === 3) { x = Math.random() * canvas.width; y = canvas.height; }
+
+    enemies.push({ x, y, radius: 12 });
+}
+
+function update() {
+    if (gameOver) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Player movement
+    if (keys["ArrowUp"] || keys["w"]) player.y -= player.speed;
+    if (keys["ArrowDown"] || keys["s"]) player.y += player.speed;
+    if (keys["ArrowLeft"] || keys["a"]) player.x -= player.speed;
+    if (keys["ArrowRight"] || keys["d"]) player.x += player.speed;
+
+    // Draw player
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+    ctx.fillStyle = "#00ffff";
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = "#00ffff";
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Enemies
+    enemies.forEach((enemy, index) => {
+        let dx = player.x - enemy.x;
+        let dy = player.y - enemy.y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+
+        enemy.x += (dx / dist) * enemySpeed;
+        enemy.y += (dy / dist) * enemySpeed;
+
+        ctx.beginPath();
+        ctx.arc(enemy.x, enemy.y, enemy.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "red";
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = "red";
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        if (dist < player.radius + enemy.radius) {
+            gameOver = true;
+            document.getElementById("gameOver").style.display = "block";
+        }
+    });
+
+    score++;
+    document.getElementById("score").innerText = score;
+
+    if (score % 500 === 0) {
+        enemySpeed += 0.5;
+    }
+
+    requestAnimationFrame(update);
+}
+
+function restartGame() {
+    enemies = [];
+    score = 0;
+    enemySpeed = 2;
+    gameOver = false;
+    player.x = 300;
+    player.y = 200;
+    document.getElementById("gameOver").style.display = "none";
+    update();
+}
+
+setInterval(spawnEnemy, 1000);
+update();
+</script>
+
+</body>
+</html>
