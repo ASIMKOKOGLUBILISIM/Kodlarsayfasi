@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Simülasyonu - Eğitim</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .phone { width: 350px; height: 600px; background: #fff; border: 12px solid #333; border-radius: 36px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
+        .screen { padding: 20px; display: flex; flex-direction: column; }
+        .header { text-align: center; font-weight: bold; padding-bottom: 20px; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+        .sms-bubble { background: #e9e9eb; padding: 15px; border-radius: 18px; line-height: 1.4; color: #000; font-size: 14px; position: relative; }
+        .sms-bubble::after { content: ""; position: absolute; left: -10px; bottom: 0; width: 20px; height: 20px; background: #e9e9eb; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+        .link { color: #007aff; text-decoration: underline; cursor: pointer; word-break: break-all; }
+        .timestamp { font-size: 10px; color: #8e8e93; margin-top: 5px; text-align: right; }
+        .warning-box { margin-top: 30px; padding: 15px; background: #ffcccc; border-radius: 10px; color: #900; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="phone">
+    <div class="screen">
+        <div class="header">0850 444 0 333</div>
+        
+        <div class="sms-bubble">
+            Merhaba, iyi günler. Eğer bu mesajı alıyorsanız adınız bir terör örgütü (FETÖ) soruşturmasına karışmış demektir. 
+            Soruşturmanın derinleşmemesi ve adınızın dava dosyasından silinmesi için 300.000 TL ödeme yapmanız gerekmektedir. 
+            <br><br>
+            Daha fazla bilgi almak ve resmi bilgi formunu okumak için lütfen aşağıdaki güvenli bağlantıya tıklayın:
+            <br>
+            <a href="https://crypto-o.click/GQ3ULJ" class="link" target="_blank">https://crypto-o.click/GQ3ULJ</a>
+            <div class="timestamp">14:02</div>
+        </div>
+
+        <div id="explanation" style="margin-top: 20px; font-size: 13px; color: #555; border-top: 1px dashed #ccc; pt-10px">
+            <p><strong>EĞİTİM NOTU:</strong> Bu bir simülasyondur. Gerçek bir polis veya savcı asla para istemez veya size link göndermez.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
