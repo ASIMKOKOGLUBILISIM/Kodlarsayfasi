@@ -20,10 +20,14 @@ Bu proje, ağ trafiğini izlemek ve güvenlik ihlallerini tespit etmek amacıyla
 ## 🚀 Kurulum ve Çalıştırma
 
 1. Gerekli kütüphaneleri kurun:
-   `pip install fastapi requests`
+   "pip install fastapi uvicorn requests"
    
 2. Sistemi başlatın:
-   `python ana.py`
+   Vscode üzerinden terminale "uvicorn main:app --reload" yazın
+   
+4. Saldırı simülatör'ünü yan agent.py'yi başlatın
+
+5. main.py'yi başlatınca verdiği url'yi açın
 
 ---
 *Bu proje eğitim ve güvenlik testleri amacıyla geliştirilmiştir.*
