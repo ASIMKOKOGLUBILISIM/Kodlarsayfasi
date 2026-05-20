@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SİBER KALE — Dijital Güvenlik Sergisi</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #00ff88;
+  --green-dim: #00cc66;
+  --green-dark: #003322;
+  --bg: #050a08;
+  --bg2: #0a1410;
+  --bg3: #0f1f18;
+  --text: #c8ffd4;
+  --text-dim: #4a7a5a;
+  --red: #ff3366;
+  --amber: #ffaa00;
+  --border: rgba(0,255,136,0.15);
+  --border-bright: rgba(0,255,136,0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* GRID BACKGROUND */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* SCANLINE */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.container { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(5,10,8,0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Orbitron', monospace;
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--green);
+  letter-spacing: 3px;
+}
+.nav-links { display: flex; gap: 1.5rem; }
+.nav-links a {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--green); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 6rem 1.5rem 4rem;
+  position: relative;
+}
+.hero-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--green-dim);
+  letter-spacing: 4px;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(36px, 8vw, 80px);
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: -1px;
+  margin-bottom: 0.5rem;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero-title span { color: var(--green); }
+.hero-sub {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(14px, 3vw, 24px);
+  font-weight: 400;
+  color: var(--text-dim);
+  letter-spacing: 4px;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-desc {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 500px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.7;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.hero-btn {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--bg);
+  background: var(--green);
+  padding: 14px 32px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  animation: fadeUp 0.6s 0.4s ease both;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.hero-btn:hover { background: #fff; transform: translateY(-2px); }
+
+.hero-stats {
+  display: flex; gap: 2rem; justify-content: center;
+  margin-top: 4rem;
+  animation: fadeUp 0.6s 0.5s ease both;
+}
+.stat { text-align: center; }
+.stat-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--green);
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 4px;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* SECTION */
+section { padding: 6rem 0; }
+.section-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--green);
+  letter-spacing: 3px;
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+.section-desc {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 560px;
+  margin-bottom: 3rem;
+}
+
+/* INFO CARDS */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+.info-card {
+  background: var(--bg2);
+  padding: 1.5rem;
+  transition: background 0.2s;
+}
+.info-card:hover { background: var(--bg3); }
+.info-icon {
+  font-size: 28px;
+  margin-bottom: 1rem;
+}
+.info-card h3 {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+.info-card p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* DIVIDER */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* QUIZ SECTION */
+.quiz-box {
+  border: 1px solid var(--border-bright);
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+.quiz-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+}
+.quiz-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.quiz-dot { width: 8px; height: 8px; border-radius: 50%; }
+.quiz-dot.r { background: var(--red); }
+.quiz-dot.a { background: var(--amber); }
+.quiz-dot.g { background: var(--green); }
+.quiz-title-bar {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-left: auto;
+  letter-spacing: 1px;
+}
+
+.quiz-inner { padding: 1.5rem; }
+
+/* PROGRESS */
+.step-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.progress-wrap { height: 3px; background: rgba(0,255,136,0.1); margin-bottom: 1.5rem; }
+.progress-fill { height: 100%; background: var(--green); transition: width 0.4s; }
+
+/* EMAIL */
+.email-card {
+  border: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+  background: var(--bg);
+}
+.email-head {
+  background: var(--bg3);
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+.email-row {
+  display: flex; gap: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  margin-bottom: 5px;
+  align-items: flex-start;
+}
+.email-lbl { color: var(--text-dim); min-width: 64px; }
+.email-val { color: var(--text); }
+.email-body-area {
+  padding: 1.25rem;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+}
+.email-body-area a { color: var(--amber); }
+.email-body-area strong { color: var(--text); }
+
+.tag {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 3px 10px;
+  margin-bottom: 10px;
+}
+.tag-phish { background: rgba(255,51,102,0.15); color: var(--red); border: 1px solid rgba(255,51,102,0.3); }
+.tag-real { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+
+/* ANSWER BTNS */
+.btn-row { display: flex; gap: 10px; margin-bottom: 1rem; }
+.ans-btn {
+  flex: 1; padding: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  color: var(--text);
+  transition: all 0.15s;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.ans-btn:hover:not(:disabled) { background: rgba(0,255,136,0.1); border-color: var(--green); color: var(--green); }
+.ans-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* FEEDBACK */
+.feedback {
+  border-left: 3px solid transparent;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  display: none;
+}
+.feedback.correct { border-color: var(--green); background: rgba(0,255,136,0.05); color: var(--green); }
+.feedback.wrong { border-color: var(--red); background: rgba(255,51,102,0.05); color: #ff6688; }
+.clue-list { margin: 8px 0 0 1rem; }
+.clue-list li { margin-bottom: 3px; opacity: 0.85; }
+
+.next-btn {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  display: none;
+  transition: all 0.15s;
+}
+.next-btn:hover { border-color: var(--green); color: var(--green); background: rgba(0,255,136,0.05); }
+
+/* RESULT */
+.result-area {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  display: none;
+}
+.result-score {
+  font-family: 'Orbitron', monospace;
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.result-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+.result-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+  letter-spacing: 1px;
+}
+.result-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.result-btn {
+  padding: 10px 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  color: var(--text);
+  transition: all 0.15s;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.result-btn:hover { background: rgba(0,255,136,0.1); color: var(--green); }
+
+/* TIPS SECTION */
+.tips-list { display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.tip-item {
+  background: var(--bg2);
+  padding: 1.25rem 1.5rem;
+  display: flex; gap: 1rem; align-items: flex-start;
+}
+.tip-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  color: rgba(0,255,136,0.2);
+  min-width: 40px;
+  line-height: 1;
+  margin-top: 2px;
+}
+.tip-content h4 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px;
+  color: var(--green);
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+.tip-content p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  position: relative; z-index: 2;
+}
+.footer-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--green);
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+}
+.footer-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor::after {
+  content: '|';
+  animation: blink 1s infinite;
+  color: var(--green);
+}
+
+/* TERMINAL ANIMATION */
+.terminal-line {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--green-dim);
+  opacity: 0;
+  animation: fadeUp 0.3s ease forwards;
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(0,255,136,0.15); }
+  50% { border-color: rgba(0,255,136,0.5); }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">SİBER KALE</div>
+  <div class="nav-links">
+    <a href="#nedir">NEDİR</a>
+    <a href="#test">TEST</a>
+    <a href="#ipuclari">İPUÇLARI</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container" style="text-align:center">
+    <div class="hero-label">// DİJİTAL GÜVENLİK SERGİSİ 2025</div>
+    <div class="hero-title">SİBER<br><span>KALE</span></div>
+    <div class="hero-sub">PHİSHİNG FARKINDALIK</div>
+    <p class="hero-desc">Dijital dünyada her gün milyonlarca sahte e-posta gönderiliyor. Sen farkı görebilir misin?</p>
+    <a href="#test" class="hero-btn">TESTI BAŞLAT</a>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">3.4M</div>
+        <div class="stat-label">GÜNLÜK PHISHING</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">%95</div>
+        <div class="stat-label">BAŞARILI SALDIRI</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3.5B</div>
+        <div class="stat-label">HEDEF KİŞİ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- NEDİR -->
+<section id="nedir">
+  <div class="container">
+    <div class="section-tag">// 01 — NEDİR</div>
+    <h2 class="section-title">Phishing nedir?</h2>
+    <p class="section-desc">Saldırganlar gerçek kurumları taklit ederek seni kandırmaya çalışır. Bir tık her şeyi değiştirebilir.</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-icon">🎣</div>
+        <h3>OLTAYA GEL</h3>
+        <p>Sahte e-posta veya mesajla kullanıcıyı tuzağa düşürme yöntemi. En yaygın siber saldırı türü.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🏦</div>
+        <h3>KURUMU TAKLİT</h3>
+        <p>Bankalar, devlet kurumları, sosyal medya platformları — hepsi taklit edilebilir.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">⚡</div>
+        <h3>ACİLİYET</h3>
+        <p>"24 saat içinde işlem yapmazsan hesabın silinecek!" Panik, insanı körleştirir.</p>
+      </div>
+      <div class="info-card">
+        <div class="info-icon">🔗</div>
+        <h3>SAHTE LİNK</h3>
+        <p>garanti-bank.com yerine garantl-bank.com gibi küçük değişiklikler fark edilmesi zor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- QUIZ -->
+<section id="test">
+  <div class="container">
+    <div class="section-tag">// 02 — TEST</div>
+    <h2 class="section-title">Farkı görebilir misin?</h2>
+    <p class="section-desc">5 e-postayı incele. Her biri için "Güvenli" veya "Phishing" kararını ver.</p>
+
+    <div class="quiz-box">
+      <div class="quiz-header">
+        <div class="quiz-dot r"></div>
+        <div class="quiz-dot a"></div>
+        <div class="quiz-dot g"></div>
+        <div class="quiz-title-bar">PHISHING_DETECTOR_v2.0 // ÇALIŞIYOR</div>
+      </div>
+
+      <div class="quiz-inner" id="quiz-area">
+        <div class="step-label" id="step-label">SORU 01 / 05</div>
+        <div class="progress-wrap"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+        <div class="email-card">
+          <div class="email-head">
+            <div id="tag-area"></div>
+            <div class="email-row"><span class="email-lbl">FROM:</span><span class="email-val" id="e-from"></span></div>
+            <div class="email-row"><span class="email-lbl">KONU:</span><span class="email-val" id="e-subject"></span></div>
+            <div class="email-row"><span class="email-lbl">TARİH:</span><span class="email-val" id="e-date" style="color:var(--text-dim)"></span></div>
+          </div>
+          <div class="email-body-area" id="e-body"></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="ans-btn" id="btn-safe" onclick="answer(false)">[ ✓ ] GÜVENLİ</button>
+          <button class="ans-btn" id="btn-phish" onclick="answer(true)">[ ! ] PHİSHİNG</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+        <button class="next-btn" id="next-btn" onclick="next()">SONRAKI SORU ></button>
+      </div>
+
+      <div class="result-area" id="result-area">
+        <div class="result-score" id="res-score"></div>
+        <div class="result-title" id="res-title"></div>
+        <div class="result-label" id="res-label"></div>
+        <div class="result-btns">
+          <button class="result-btn" onclick="restart()">[ TEKRAR OYNA ]</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- İPUÇLARI -->
+<section id="ipuclari">
+  <div class="container">
+    <div class="section-tag">// 03 — İPUÇLARI</div>
+    <h2 class="section-title">Nasıl korunursun?</h2>
+    <p class="section-desc">Bu 6 kuralı ezberlemen seni çoğu saldırıdan korur.</p>
+
+    <div class="tips-list">
+      <div class="tip-item">
+        <div class="tip-num">01</div>
+        <div class="tip-content">
+          <h4>ALAN ADINI KONTROL ET</h4>
+          <p>E-posta adresinin @'den sonraki kısmına dikkat et. "garantl.com" veya "google-destek.net" gibi şüpheli domain'ler sahtecilik işaretidir.</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">02</div>
+        <div class="tip-content">
+          <h4>LİNKE TIKLAMADAN ÖNCE GÖR</h4>
+          <p>Mouse'u linkin üzerine getir (tıklamadan), sol altta gerçek URL'yi göreceksin. Beklediğin siteye mi gidiyor?</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">03</div>
+        <div class="tip-content">
+          <h4>ACİLİYET TUZAĞINA DÜŞME</h4>
+          <p>"24 saat içinde" veya "hesabın silinecek" gibi ifadeler seni paniğe sokmak için kurgulanmış. Dur, düşün, doğrula.</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">04</div>
+        <div class="tip-content">
+          <h4>ŞİFRENİ E-POSTA İLE PAYLAŞMA</h4>
+          <p>Hiçbir banka, devlet kurumu veya şirket senden e-posta yoluyla şifre veya banka bilgisi istemez.</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">05</div>
+        <div class="tip-content">
+          <h4>İKİ FAKTÖRLÜ DOĞRULAMA</h4>
+          <p>Tüm önemli hesaplarında 2FA aktif et. Şifren çalınsa bile saldırgan hesabına giremez.</p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">06</div>
+        <div class="tip-content">
+          <h4>DOĞRUDAN KURUMU ARA</h4>
+          <p>Şüphelendiğinde kurumun resmi sitesine veya müşteri hizmetlerine git — e-postadaki linke değil.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">SİBER KALE</div>
+  <div class="footer-text">// DİJİTAL GÜVENLİK FARKINDALIK SERGİSİ 2025</div>
+</footer>
+
+<script>
+const emails = [
+  {
+    from: "destek@garantl-bankasi.com",
+    subject: "Hesabınız askıya alındı — acil işlem gerekiyor",
+    date: "Bugün, 09:14",
+    body: `Sayın Değerli Müşterimiz,<br><br>
+Hesabınızda <strong>şüpheli işlem tespit edilmiştir</strong>. Güvenliğiniz için hesabınız geçici olarak kısıtlanmıştır.<br><br>
+Hesabınızı yeniden aktifleştirmek için aşağıdaki bağlantıya tıklayınız:<br><br>
+<a href="#">www.garanti-guvenlik-dogrulama.net/giris</a><br><br>
+Bu işlemi <strong>24 saat içinde</strong> gerçekleştirmezseniz hesabınız kalıcı olarak kapatılacaktır.<br><br>
+Saygılarımızla,<br>Garanti Bankası Güvenlik Ekibi`,
+    isPhishing: true,
+    clues: ["Alan adı yanlış: 'garantl-bankasi.com' (harf eksik)","Link farklı bir siteye yönlendiriyor","Aciliyet ve tehdit dili: '24 saat içinde'","Gerçek bankalar link gönderip tıklatmaz"],
+    explanation: "PHİSHİNG! Gönderen adresi ve bağlantı sahte."
+  },
+  {
+    from: "noreply@github.com",
+    subject: "Your pull request #1482 was merged",
+    date: "Bugün, 11:03",
+    body: `Hi there,<br><br>Pull request <strong>#1482 — Fix login redirect bug</strong> was merged into <code>main</code> by <strong>@ahmet-dev</strong>.<br><br><a href="#">View the merged pull request</a><br><br>You are receiving this because you authored the pull request.<br><br>— GitHub`,
+    isPhishing: false,
+    clues: ["Alan adı gerçek: github.com","Kişiselleştirilmiş içerik (PR numarası, kullanıcı adı)","Aciliyet veya tehdit yok","Link domain'i tutarlı"],
+    explanation: "GERÇEK! Bu normal bir GitHub bildirimi."
+  },
+  {
+    from: "odulleriniz@kampanya-merkezi.info",
+    subject: "Tebrikler! 50.000 TL değerinde iPhone kazandınız!",
+    date: "Dün, 22:47",
+    body: `Değerli kullanıcı,<br><br>Bu ay düzenlediğimiz çekilişin <strong>büyük ödülünü</strong> siz kazandınız!<br><br><strong>50.000 TL değerinde iPhone 15 Pro</strong> hediyenizi almak için lütfen aşağıdaki formu doldurun ve 39,90 TL kargo ücretini ödeyin:<br><br><a href="#">ÖDÜLÜMÜ ALMAK İSTİYORUM</a><br><br>Ödülünüz <strong>48 saat içinde</strong> talep edilmezse başka bir katılımcıya devredilecektir.`,
+    isPhishing: true,
+    clues: ["Bilinmeyen göndericiden büyük ödül","Para istiyor: 'kargo ücreti' bahanesi","48 saat baskısı — yapay aciliyet","Alan adı şüpheli: kampanya-merkezi.info"],
+    explanation: "PHİSHİNG! Klasik ödül dolandırıcılığı."
+  },
+  {
+    from: "no-reply@accounts.google.com",
+    subject: "Güvenlik uyarısı: Hesabınıza yeni cihazdan giriş yapıldı",
+    date: "Bugün, 08:31",
+    body: `Google Hesabı güvenlik uyarısı<br><br><strong>Yeni bir Windows cihazdan giriş yapıldı.</strong><br><br><strong>Zaman:</strong> 08:29, İstanbul<br><strong>Tarayıcı:</strong> Chrome<br><strong>Konum:</strong> Adana, Türkiye<br><br>Bu siz değilseniz hesabınızı hemen güvenceye alın:<br><a href="#">Güvenliği kontrol et</a><br><br>Bu işlemi siz yaptıysanız herhangi bir şey yapmanıza gerek yok.<br><br>Google Güvenlik Ekibi`,
+    isPhishing: false,
+    clues: ["Gönderen: accounts.google.com — gerçek","Detaylı tutarlı bilgi (konum, tarayıcı, saat)","Zorunlu işlem yok, sadece bilgilendirme","'Siz yaptıysanız bir şey yapmanıza gerek yok' — baskı yok"],
+    explanation: "GERÇEK! Bu normal bir Google güvenlik bildirimi."
+  },
+  {
+    from: "ik-departmani@turktelekorn.com",
+    subject: "Acil: Maaş bilgilerinizi bugün güncelleyin",
+    date: "Bugün, 13:55",
+    body: `Sayın Çalışanımız,<br><br>Finans departmanımız yeni ödeme sistemine geçiş yapıyor. Maaş ödemelerinizin aksamaması için <strong>banka bilgilerinizi</strong> aşağıdaki formdan güncellemeniz gerekmektedir.<br><br><a href="#">Banka bilgilerimi güncelle</a><br><br>Bu güncellemeyi <strong>bugün mesai bitimine kadar</strong> yapmazsanız bu ay maaşınız ödenemeyecektir.<br><br>İnsan Kaynakları<br>Türk Telekom`,
+    isPhishing: true,
+    clues: ["Alan adı yanlış: 'turktelekorn.com' (yazım hatası)","Banka bilgisi istiyor — büyük red flag","'Bugün mesai bitimine kadar' — yapay aciliyet","Şirketler banka bilgisini e-posta ile istemez"],
+    explanation: "PHİSHİNG! Türk Telekom'u taklit eden spear phishing."
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function load() {
+  const e = emails[current];
+  answered = false;
+  document.getElementById('step-label').textContent = `SORU 0${current+1} / 0${emails.length}`;
+  document.getElementById('prog').style.width = `${(current/emails.length)*100}%`;
+  document.getElementById('e-from').textContent = e.from;
+  document.getElementById('e-subject').textContent = e.subject;
+  document.getElementById('e-date').textContent = e.date;
+  document.getElementById('e-body').innerHTML = e.body;
+  document.getElementById('tag-area').innerHTML = '';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('btn-safe').disabled = false;
+  document.getElementById('btn-phish').disabled = false;
+  document.getElementById('btn-safe').style.opacity = '1';
+  document.getElementById('btn-phish').style.opacity = '1';
+}
+
+function answer(guessPhishing) {
+  if(answered) return;
+  answered = true;
+  const e = emails[current];
+  const correct = guessPhishing === e.isPhishing;
+  if(correct) score++;
+
+  document.getElementById('btn-safe').disabled = true;
+  document.getElementById('btn-phish').disabled = true;
+
+  const tagArea = document.getElementById('tag-area');
+  tagArea.innerHTML = `<span class="tag ${e.isPhishing ? 'tag-phish' : 'tag-real'}">${e.isPhishing ? '⚠ PHİSHİNG' : '✓ GERÇEK'}</span>`;
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = `<strong>${correct ? '// DOĞRU' : '// YANLIŞ'}</strong> — ${e.explanation}<ul class="clue-list">${e.clues.map(c=>`<li>> ${c}</li>`).join('')}</ul>`;
+  fb.style.display = 'block';
+
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = current < emails.length - 1 ? 'SONRAKI SORU >' : 'SONUCU GÖR >';
+}
+
+function next() {
+  current++;
+  if(current >= emails.length) showResult();
+  else load();
+}
+
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const ra = document.getElementById('result-area');
+  ra.style.display = 'block';
+  document.getElementById('res-score').textContent = `${score}/${emails.length}`;
+  const titles = ['DAHA ÇOK PRATIK LAZIM','FENA DEĞİL!','İYİ İŞ!','ÇOK İYİ!','MÜKEMMEL!','SİBER UZMAN! 🏆'];
+  const labels = ['Phishing saldırıları tehlikeli. Tekrar dene!','Bazı ipuçlarını kaçırdın.','Temel ipuçlarını yakalıyorsun.','Çoğu tehdidi fark edebiliyorsun.','Neredeyse mükemmel!','Tüm soruları doğru cevapladın!'];
+  document.getElementById('res-title').textContent = titles[score];
+  document.getElementById('res-label').textContent = labels[score];
+}
+
+function restart() {
+  current = 0; score = 0;
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('result-area').style.display = 'none';
+  load();
+}
+
+load();
+
+// Scroll smooth
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if(t) { e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+</script>
+</body>
+</html>
